@@ -1,0 +1,42 @@
+#.................................... Face Detection in a Video .........................
+import os
+import numpy as np
+import cv2
+from infopy import faceDetection
+from infopy import training,lables,rec,text
+
+face_recognizer = cv2.face.LBPHFaceRecognizer_create()
+face_recognizer.read('C:\\Users\\Mani\\PycharmProjects\\frontend\\img\\py_prac\\trained_data.xml')
+name={0:'Nithish', 1: 'Joseph'}
+
+cap = cv2.VideoCapture(0)
+while True:
+    check,img = cap.read()
+    faces_detec,gray = faceDetection(img)
+
+
+    for x,y,h,w in faces_detec:
+        cv2.rectangle(img,(x,y),(x+w,y+h),(5,200,1),2)
+
+
+    for face in faces_detec:
+        (x,y,w,h) = face
+        roi_gray = gray[x:x+w,y:y+h]
+        lable, confidence = face_recognizer.predict(roi_gray)
+        print('Confidence: ', confidence)
+        print('Lable: ', lable)
+        if confidence > 90:
+            continue
+        rec(img, face)
+        predicted_name = name[lable]
+        text(img, predicted_name, x, y)
+
+    resized = cv2.resize(img, (800, 800))
+    cv2.imshow('Face Detected', resized)
+
+    key = cv2.waitKey(1)
+    if key == ord(' '):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
