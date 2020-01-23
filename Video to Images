@@ -1,0 +1,16 @@
+import cv2
+cap = cv2.VideoCapture(0)
+count = 0
+while True:
+    ret,img = cap.read()
+    if ret is None:
+        continue
+    count = count+1
+    resized_img = cv2.resize(img,(800,800))
+    cv2.imshow('resized',resized_img)
+    cv2.imwrite('#desired_location\\img%d.jpg'% count, resized_img)
+    key = cv2.waitKey(1)
+    if key == ord(' '):
+        break
+cap.release()
+cv2.destroyAllWindows()
